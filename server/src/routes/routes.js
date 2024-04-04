@@ -1,5 +1,5 @@
 const express = require('express');
-const workflowcontroller = require('./controllers/workflow.controller');
+const workflowcontroller = require('../controllers/workflow.controller');
 
 const router = express.Router();
 
