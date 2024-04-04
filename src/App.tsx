@@ -1,24 +1,18 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import CreateWorkflows from './Components/CreateWorkflows/CreateWorkflows';
+import WorkflowTable from './Components/Workfllows/WorkflowTable';
 
 function App() {
+
+  const [items, setItems] = useState<Array<string>>([]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="py-4">
+      <div className="text-center py-6">
+        <h1 className="text-2xl font-bold">Workflow Management System</h1>
+      </div>
+      <WorkflowTable />
     </div>
   );
 }
