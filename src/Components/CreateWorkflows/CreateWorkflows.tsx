@@ -7,30 +7,15 @@ import { AppContext } from "../../Context/Context";
 const CreateWorkflows = () => {
   const [workflowName, setWorflowName] = useState<string>("");
   const navigate = useNavigate();
-  const { state, dispatch } = useContext(AppContext);
 
   const CreateWorkflow = async (e: any) => {
     e.preventDefault();
+    let workflowId = uuidv4();
     const response = await HTTPServices.createWorkflow({
-      id: uuidv4(),
+      id: workflowId,
       workflowName,
     });
-    dispatch({
-      type: 'ADD_WORKFLOW',
-      payload: {
-        id: uuidv4(),
-        name: workflowName,
-        nodes: [
-          {
-            id: 1,
-            nodeName: "new context nodes",
-            nodePointer: ''
-          }
-        ]
-      }
-    })
-    navigate(`/listworkflow/${uuidv4()}`);
-    console.log(response.data);
+    navigate(`/listworkflow/${workflowId}`);
   };
 
   return (

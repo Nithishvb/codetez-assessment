@@ -1,65 +1,57 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AppContext } from "../../Context/Context";
 import { useNavigate, useParams } from "react-router-dom";
+import { HTTPServices } from "../../services/HTTPServices";
+import { endpoints } from "../../services/endpoints";
+import useFetch from "../../Hooks/useFetchHook";
 
-type NodesFieldType = {
+export type NodesFieldType = {
   id: number;
-  nodeName: string;
-  nodePointer: string;
+  name: string;
+  pointer: string;
 };
-
-const NODES_DATA: NodesFieldType[] = [
-  {
-    id: 1,
-    nodeName: "Start",
-    nodePointer: "0",
-  },
-];
 
 const EditWorkflow = () => {
   const { id } = useParams();
-  const { state , dispatch } = useContext(AppContext);
-  const [nodes, setNodes] = useState<NodesFieldType[]>(state.workflow.nodes);
+  const { data } = useFetch(endpoints.WORKFLOW_ITEMS(id || ''));
+  const [nodes, setNodes] = useState<NodesFieldType[]>([]);
   const navigate = useNavigate();
 
+  useEffect(() => {
+    if(data){
+      setNodes(data?.data);
+    }
+  }, [data])
+
   const addNewItem = () => {
-    const newField: NodesFieldType = { nodeName: "", nodePointer: "" , id: nodes.length+1 };
+    const newField: NodesFieldType = { name: "", pointer: "" , id: nodes.length+1 };
     setNodes([...nodes, newField]);
   };
 
   const handleInputChange = (index: number, value: string) => {
     const updatedFields = [...nodes];
-    updatedFields[index].nodeName = value;
+    updatedFields[index].name = value;
     setNodes(updatedFields);
   };
 
   const handleSelectChange = (index: number, value: string) => {
-    let findPointerId = nodes.filter((e) => e.nodeName === value)[0].id;
+    const findIndex = nodes.findIndex((e) => e.id == parseInt(value));
     const updatedFields = [...nodes];
-    updatedFields[index].nodePointer = JSON.stringify(findPointerId);
+    updatedFields[index].pointer = value;
     setNodes(updatedFields);
   };
 
-  const updateWorkflow = () => {
-    dispatch({
-      type: 'ADD_ITEM',
-      payload: {
-        node: nodes
-      }
-    })
-    console.log(nodes);
+  const updateWorkflow = async () => {
+    const response = await HTTPServices.updateWorkflowItem({
+     workflowId: id,
+     nodes: nodes
+    });
     navigate(`/listworkflow/${id}`);
   };
 
   const deleteItem = (e: any,index: number) => {
-    let removeNode = state.workflow.nodes.filter((e) => e.id !== index);
     e.preventDefault();
-    dispatch({
-      type: 'DELETE_ITEM',
-      payload: {
-        nodes: removeNode
-      }
-    })
+    let removeNode = nodes.filter((e,i) => e.id !== index);
     setNodes(removeNode);
   };
 
@@ -77,7 +69,7 @@ const EditWorkflow = () => {
               </label>
               <input
                 type="text"
-                value={val.nodeName}
+                value={val.name}
                 onChange={(e) => handleInputChange(index, e.target.value)}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Enter the item name"
@@ -90,7 +82,7 @@ const EditWorkflow = () => {
               </label>
               <select
                 id="countries"
-                value={val.nodePointer}
+                value={val.pointer}
                 onChange={(e) => handleSelectChange(index, e.target.value)}
                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               >
@@ -98,14 +90,8 @@ const EditWorkflow = () => {
                 {nodes.map(
                   (optionField, optionIndex) =>
                     index !== optionIndex && (
-                      <option className="flex">
-                        <input
-                          id="default-checkbox"
-                          type="checkbox"
-                          value={JSON.stringify(optionField.id)}
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                        />
-                        {optionField.nodeName}
+                      <option className="flex" key={optionIndex} value={JSON.stringify(optionField.id)}>
+                        {optionField.name}
                       </option>
                     )
                 )}

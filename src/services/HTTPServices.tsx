@@ -1,5 +1,5 @@
 import axios from "axios";
-import { createWorkflowTypes } from "../types/CreateWorkflowType";
+import { createWorkflowTypes, updateWorkflowItemTyps } from "../types/CreateWorkflowType";
 import { endpoints } from "./endpoints";
 
 export const HTTPServices = {
@@ -8,5 +8,14 @@ export const HTTPServices = {
       id: id,
       workflowName: workflowName,
     });
+  },
+  updateWorkflowItem: ({ nodes , workflowId }: updateWorkflowItemTyps) => {
+    return axios.put(endpoints.UPDATE_WORKFLOW(), {
+      nodes: nodes,
+      workflowId: workflowId
+    });
+  },
+  deleteWorkflow: (id: string) => {
+    return axios.delete(endpoints.DELETE_WORKFLOW(id));
   },
 };
