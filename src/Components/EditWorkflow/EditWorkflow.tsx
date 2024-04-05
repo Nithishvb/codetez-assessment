@@ -1,5 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../../Context/Context";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { HTTPServices } from "../../services/HTTPServices";
 import { endpoints } from "../../services/endpoints";

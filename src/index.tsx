@@ -6,7 +6,6 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ListWorkflows from "./Components/ListWorkflows/ListWorkflows";
 import EditWorkflow from "./Components/EditWorkflow/EditWorkflow";
 import CreateWorkflows from "./Components/CreateWorkflows/CreateWorkflows";
-import { AppProvider } from "./Context/Context";
 
 const router = createBrowserRouter([
   {
@@ -31,7 +30,5 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <AppProvider>
     <RouterProvider router={router} />
-  </AppProvider>
 );
